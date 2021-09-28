@@ -1,10 +1,9 @@
 package main
 
 import (
-	"os"
-	"uff/scrap"
+	"uff/cmd"
 )
 
 func main() {
-	scrap.FetchFriends(os.Getenv("url"))
+	cmd.Execute()
 }
