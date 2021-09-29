@@ -8,8 +8,11 @@ import (
 	"net/http/cookiejar"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
+
+	"uff/db"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/joho/godotenv"
@@ -99,7 +102,15 @@ func FetchFriends(link string) {
 		mutual = strings.Replace(mutual, " mutual friends", "", 1)
 		link = strings.Replace(link, "?fref=fr_tab", "", 1)
 
+		// parse mutual value to int
+		mutual_int, err := strconv.ParseInt(mutual, 10, 32)
+		if err != nil {
+			fmt.Println("Error occured while parsing mutual int of", name, mutual)
+			mutual_int = 0
+		}
+
 		fmt.Printf("%s %s %s \n", name, mutual, link)
+		db.InsertToFriend(name, int(mutual_int), link)
 		count++
 	})
 
@@ -112,6 +123,6 @@ func FetchFriends(link string) {
 		return
 	}
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(200 * time.Millisecond)
 	FetchFriends(next)
 }
